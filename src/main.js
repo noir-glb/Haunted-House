@@ -420,7 +420,7 @@ for(let i=0; i<25; i++){
   // geometry
   const grave = new THREE.Mesh(graveGeomemtry, graveMaterial)
   grave.position.x = x
-  grave.position.y = Math.random() * 0.4
+  grave.position.y = Math.random() * 0.3
   grave.position.z = z
 
   grave.rotation.x = (Math.random() - 0.5) * 0.4
@@ -461,13 +461,13 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.12)
 scene.add(ambientLight)
 
 // light above the door
-const aboveDoor = new THREE.PointLight('white', 5)
+const aboveDoor = new THREE.PointLight('white', 2)
 aboveDoor.position.y += 0.9
 aboveDoor.position.x -= 2
 aboveDoor.position.z += 1 + 0.001
 house.add(aboveDoor)
 
-const aboveGarageDoor = new THREE.PointLight('white', 5)
+const aboveGarageDoor = new THREE.PointLight('white', 2)
 aboveGarageDoor.position.y += 0.9
 aboveGarageDoor.position.x += 2
 aboveGarageDoor.position.z += 1 + 0.001
@@ -478,6 +478,69 @@ gui.add(directionalLight, 'intensity').min(0).max(3).step(0.01).name('dr light')
 gui.add(ambientLight, 'intensity').min(0).max(3).step(0.001).name('am light')
 gui.add(aboveDoor, 'intensity').min(0).max(5).step(0.01).name('door light')
 gui.add(aboveGarageDoor, 'intensity').min(0).max(5).step(0.01).name('garage light')
+
+// ghost lights
+const ghost1 = new THREE.PointLight('#8800ff', 1)
+const ghost2 = new THREE.PointLight('#ff0088', 1)
+const ghost3 = new THREE.PointLight('#E6534E', 1)
+
+house.add(ghost1, ghost2, ghost3)
+
+// shadow
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
+
+// light shadow
+directionalLight.castShadow = true
+aboveDoor.castShadow = true
+aboveGarageDoor.castShadow = true
+ghost1.castShadow = true
+ghost2.castShadow = true
+ghost3.castShadow = true
+
+// walls shadow
+midBlock.castShadow = true
+midBlock.receiveShadow = true
+leftBlock.castShadow = true
+leftBlock.receiveShadow = true
+rightBlock.castShadow = true
+rightBlock.receiveShadow = true
+
+// roof shadow
+roof.castShadow = true
+leftRoof.castShadow = true
+rightRoof.castShadow = true
+
+// graves shadow
+for(const grave of graves.children){
+  grave.castShadow = true
+  grave.receiveShadow = true
+}
+
+// floor shadow
+floor.receiveShadow = true
+
+// shadow mapping
+directionalLight.shadow.mapSize.width = 256
+directionalLight.shadow.mapSize.height = 256
+directionalLight.shadow.camera.top = 8
+directionalLight.shadow.camera.right = 8
+directionalLight.shadow.camera.bottom = -8
+directionalLight.shadow.camera.left = -8
+directionalLight.shadow.camera.near = 1
+directionalLight.shadow.camera.far = 25
+
+ghost1.shadow.mapSize.width = 256
+ghost1.shadow.mapSize.height = 256
+ghost1.shadow.camera.far = 10 
+
+ghost2.shadow.mapSize.width = 256
+ghost2.shadow.mapSize.height = 256
+ghost2.shadow.camera.far = 10 
+
+ghost3.shadow.mapSize.width = 256
+ghost3.shadow.mapSize.height = 256
+ghost3.shadow.camera.far = 10 
 
 // controls
 const controls = new OrbitControls(camera, canvas)
@@ -508,18 +571,41 @@ document.exitFullscreen()
 })
 
 // fog
-scene.fog = new THREE.FogExp2('white', 0.09)
-gui.add(scene.fog, 'density').min(0).max(0.5).step(0.001)
+// scene.fog = new THREE.FogExp2('white', 0.09)
+// gui.add(scene.fog, 'density').min(0).max(0.5).step(0.001)
 
 // Animate
 const timer = new Timer()
 const tick = ()=>{
+  // stats
   stats.begin()
+
+  // timer update
   timer.update()
+
   const elapsedTime = timer.getElapsed()
+
+  const ghost1angle = elapsedTime * 0.4
+  ghost1.position.x = Math.sin(ghost1angle) * 4
+  ghost1.position.z = Math.cos(ghost1angle) *4
+  ghost1.position.y = Math.sin(ghost1angle) * Math.sin(ghost1angle * 2.34) * Math.sin(ghost1angle * 3.25)
+
+  const ghost2angle = -elapsedTime * 0.34
+  ghost2.position.x = Math.sin(ghost2angle) * 6
+  ghost2.position.z = Math.cos(ghost2angle) * 6
+  ghost2.position.y = Math.sin(ghost2angle) * Math.sin(ghost2angle * 2.34) * Math.sin(ghost2angle * 3.25)
+
+  const ghost3angle = elapsedTime * 0.23
+  ghost3.position.x = Math.sin(ghost3angle) * 7
+  ghost3.position.z = Math.cos(ghost3angle) * 7
+  ghost3.position.y = Math.sin(ghost3angle) * Math.sin(ghost3angle * 2.34) * Math.sin(ghost3angle * 3.25)
+
+
   controls.update()
+
   renderer.render(scene, camera)
   stats.end()
+
   window.requestAnimationFrame(tick)
 }
 tick()
