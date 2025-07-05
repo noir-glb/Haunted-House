@@ -9,8 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^7.0.0",
-    "vite-plugin-restart": "^0.4.2"
+    "vite": "^7.0.0"
   },
   "dependencies": {
     "lil-gui": "^0.20.0",
