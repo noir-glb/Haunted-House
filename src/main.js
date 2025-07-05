@@ -80,6 +80,7 @@ garagewallRoughnessTexture.wrapS = THREE.RepeatWrapping
 
 garagewallMetalnessTexture.repeat.set(3, 1)
 garagewallMetalnessTexture.wrapS = THREE.RepeatWrapping
+
 // roof
 const roofColorTexture = textureLoader.load('./roof/color.webp')
 roofColorTexture.colorSpace = THREE.SRGBColorSpace
@@ -136,8 +137,7 @@ const garageDoorColorTexture = textureLoader.load('/main-roof/color.webp')
 garageDoorColorTexture.colorSpace = THREE.SRGBColorSpace
 const garageDoorAOTexture = textureLoader.load('./main-roof/ao.webp')
 const garageDoorNormalTexture = textureLoader.load('./main-roof/normal.webp')
-const garageDoorHeightTexture = textureLoader.load('./main-roof/disp.webp')
-const garageDoorMetalnessTexture = textureLoader.load('./main-roof/metal.webp')
+const garageDoorHeightTexture = textureLoader.load('./main-roof/height.webp')
 
 // lower-window
 // const lowerWindowColorTexture = textureLoader.load('/lower-window/color.webp')
@@ -147,14 +147,14 @@ const garageDoorMetalnessTexture = textureLoader.load('./main-roof/metal.webp')
 // const lowerWindowHeightTexture = textureLoader.load('./lower-window/height.webp')
 
 // upper-window
-const upperWindowAlphaTexture = textureLoader.load('/upper-window/alpha.jpg')
+// const upperWindowAlphaTexture = textureLoader.load('/upper-window/alpha.jpg')
 const upperWindowColorTexture = textureLoader.load('/upper-window/color.webp')
 upperWindowColorTexture.colorSpace = THREE.SRGBColorSpace
 const upperWindowAOTexture = textureLoader.load('./upper-window/ao.webp')
 const upperWindowNormalTexture = textureLoader.load('./upper-window/normal.webp')
 const upperWindowRoughnessTexture = textureLoader.load('./upper-window/roughness.webp')
 const upperWindowHeightTexture = textureLoader.load('./upper-window/height.webp')
-const upperWindowMetalnessTexture = textureLoader.load('./upper-window/metallic.webp')
+// const upperWindowMetalnessTexture = textureLoader.load('./upper-window/metallic.webp')
 
 // graves
 const graveColorTexture = textureLoader.load('/graves/color.webp')
@@ -367,32 +367,30 @@ window3.rotation.z = Math.PI * 0.5
 house.add(window3)
 
 // bushes
-const bushes = new THREE.Mesh(
-    new THREE.SphereGeometry(1, 64, 64),
-    new THREE.MeshStandardMaterial({
+const bushGeometry = new THREE.SphereGeometry(1, 64, 64)
+const bushMaterial = new THREE.MeshStandardMaterial({
       map: bushColorTexture,  
       aoMap: bushAOTexture,
       normalMap: bushNormalTexture
     })
-)
 
 // bushes.material.wireframe = true
-const bush1 = bushes.clone()
+const bush1 = new THREE.Mesh(bushGeometry, bushMaterial)
 bush1.position.set(0.8, 0.2, 1.3)
 bush1.scale.setScalar(0.4)
 bush1.rotation.x = -0.75
 
-const bush2 = bushes.clone()
+const bush2 = new THREE.Mesh(bushGeometry, bushMaterial)
 bush2.position.set(1.4, 0.1, 1.2)
 bush2.scale.setScalar(0.25)
 bush2.rotation.x = -0.75
 
-const bush3 = bushes.clone()
+const bush3 = new THREE.Mesh(bushGeometry, bushMaterial)
 bush3.position.set(-1, 0.1, 1.3)
 bush3.scale.setScalar(0.4)
 bush3.rotation.x = -0.75
 
-const bush4 = bushes.clone()
+const bush4 = new THREE.Mesh(bushGeometry, bushMaterial)
 bush4.position.set(-2.6, 0.05, 1.2)
 bush4.scale.setScalar(0.3)
 bush4.rotation.x = -0.75
@@ -462,13 +460,13 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.12)
 scene.add(ambientLight)
 
 // light above the door
-const aboveDoor = new THREE.PointLight('white', 1.5)
+const aboveDoor = new THREE.PointLight('white', 3)
 aboveDoor.position.y += 0.9
 aboveDoor.position.x -= 2
 aboveDoor.position.z += 1 + 0.001
 house.add(aboveDoor)
 
-const aboveGarageDoor = new THREE.PointLight('white', 1.5)
+const aboveGarageDoor = new THREE.PointLight('white', 3)
 aboveGarageDoor.position.y += 0.9
 aboveGarageDoor.position.x += 2
 aboveGarageDoor.position.z += 1 + 0.001
@@ -512,6 +510,19 @@ roof.castShadow = true
 leftRoof.castShadow = true
 rightRoof.castShadow = true
 
+// bushes
+bush1.castShadow = true
+bush1.receiveShadow = true  
+
+bush2.castShadow = true
+bush2.receiveShadow = true
+
+bush3.castShadow = true
+bush3.receiveShadow = true
+
+bush4.castShadow = true
+bush4.receiveShadow = true
+
 // graves shadow
 for(const grave of graves.children){
   grave.castShadow = true
@@ -534,6 +545,9 @@ directionalLight.shadow.camera.far = 25
 aboveGarageDoor.shadow.mapSize.width = 256
 aboveGarageDoor.shadow.mapSize.height = 256
 
+aboveGarageDoor.shadow.mapSize.width = 256
+aboveGarageDoor.shadow.mapSize.height = 256
+
 ghost1.shadow.mapSize.width = 256
 ghost1.shadow.mapSize.height = 256
 ghost1.shadow.camera.far = 10 
@@ -545,6 +559,7 @@ ghost2.shadow.camera.far = 10
 ghost3.shadow.mapSize.width = 256
 ghost3.shadow.mapSize.height = 256
 ghost3.shadow.camera.far = 10 
+
 
 // controls
 const controls = new OrbitControls(camera, canvas)
@@ -587,8 +602,8 @@ sky.material.uniforms['sunPosition'].value.set(0.3, -0.038,-0.95)
 
 
 // fog
-// scene.fog = new THREE.FogExp2('white', 0.09)
-// gui.add(scene.fog, 'density').min(0).max(0.5).step(0.001)
+scene.fog = new THREE.FogExp2('#14333e', 0.15)
+gui.add(scene.fog, 'density').min(0).max(0.5).step(0.001)
 
 // Animate
 const timer = new Timer()
