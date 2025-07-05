@@ -9,7 +9,7 @@ import {Sky} from 'three/addons/objects/Sky.js'
 const canvas = document.querySelector('.webgl')
 
 // gui
-const gui = new GUI()
+// const gui = new GUI()
 
 // stats
 const stats = new Stats()
