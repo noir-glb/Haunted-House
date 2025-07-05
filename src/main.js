@@ -3,6 +3,7 @@ import {Timer} from 'three/addons/misc/Timer.js'
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import Stats from 'stats.js'
+import {Sky} from 'three/addons/objects/Sky.js'
 
 // canvas
 const canvas = document.querySelector('.webgl')
@@ -461,13 +462,13 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.12)
 scene.add(ambientLight)
 
 // light above the door
-const aboveDoor = new THREE.PointLight('white', 2)
+const aboveDoor = new THREE.PointLight('white', 1.5)
 aboveDoor.position.y += 0.9
 aboveDoor.position.x -= 2
 aboveDoor.position.z += 1 + 0.001
 house.add(aboveDoor)
 
-const aboveGarageDoor = new THREE.PointLight('white', 2)
+const aboveGarageDoor = new THREE.PointLight('white', 1.5)
 aboveGarageDoor.position.y += 0.9
 aboveGarageDoor.position.x += 2
 aboveGarageDoor.position.z += 1 + 0.001
@@ -530,6 +531,9 @@ directionalLight.shadow.camera.left = -8
 directionalLight.shadow.camera.near = 1
 directionalLight.shadow.camera.far = 25
 
+aboveGarageDoor.shadow.mapSize.width = 256
+aboveGarageDoor.shadow.mapSize.height = 256
+
 ghost1.shadow.mapSize.width = 256
 ghost1.shadow.mapSize.height = 256
 ghost1.shadow.camera.far = 10 
@@ -569,6 +573,18 @@ canvas.requestFullscreen()
 document.exitFullscreen()
 }
 })
+
+// sky
+const sky = new Sky()
+sky.scale.setScalar(100)
+scene.add(sky)
+
+sky.material.uniforms['turbidity'].value = 10
+sky.material.uniforms['rayleigh'].value = 3
+sky.material.uniforms['mieCoefficient'].value = 0.1
+sky.material.uniforms['mieDirectionalG'].value = 0.95
+sky.material.uniforms['sunPosition'].value.set(0.3, -0.038,-0.95)
+
 
 // fog
 // scene.fog = new THREE.FogExp2('white', 0.09)
