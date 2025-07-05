@@ -80,12 +80,12 @@ garagewallRoughnessTexture.wrapS = THREE.RepeatWrapping
 garagewallMetalnessTexture.repeat.set(3, 1)
 garagewallMetalnessTexture.wrapS = THREE.RepeatWrapping
 // roof
-const roofColorTexture = textureLoader.load('/main-roof/color.webp')
+const roofColorTexture = textureLoader.load('./roof/color.webp')
 roofColorTexture.colorSpace = THREE.SRGBColorSpace
-const roofAOTexture = textureLoader.load('./main-roof/ao.webp')
-const roofNormalTexture = textureLoader.load('./main-roof/normal.webp')
-const roofRoughnessTexture = textureLoader.load('./main-roof/roughness.webp')
-const roofHeightTexture = textureLoader.load('./main-roof/height.webp')
+const roofAOTexture = textureLoader.load('./roof/ao.webp')
+const roofNormalTexture = textureLoader.load('./roof/normal.webp')
+const roofRoughnessTexture = textureLoader.load('./roof/roughness.webp')
+const roofHeightTexture = textureLoader.load('./roof/height.webp')
 
 roofColorTexture.repeat.set(3, 2)
 roofColorTexture.wrapS = THREE.RepeatWrapping
@@ -131,12 +131,12 @@ const mainDoorHeightTexture = textureLoader.load('./main-door/height.webp')
 // mainDoorRoughnessTexture.wrapS = THREE.RepeatWrapping
 
 // garage-door
-// const garageDoorColorTexture = textureLoader.load('/garage-door/color.webp')
-// garageDoorColorTexture.colorSpace = THREE.SRGBColorSpace
-// const garageDoorAOTexture = textureLoader.load('./garage-door/ao.webp')
-// const garageDoorNormalTexture = textureLoader.load('./garage-door/normal.webp')
-// const garageDoorHeightTexture = textureLoader.load('./garage-door/disp.webp')
-// const garageDoorMetalnessTexture = textureLoader.load('./garage-door/metal.webp')
+const garageDoorColorTexture = textureLoader.load('/main-roof/color.webp')
+garageDoorColorTexture.colorSpace = THREE.SRGBColorSpace
+const garageDoorAOTexture = textureLoader.load('./main-roof/ao.webp')
+const garageDoorNormalTexture = textureLoader.load('./main-roof/normal.webp')
+const garageDoorHeightTexture = textureLoader.load('./main-roof/disp.webp')
+const garageDoorMetalnessTexture = textureLoader.load('./main-roof/metal.webp')
 
 // lower-window
 // const lowerWindowColorTexture = textureLoader.load('/lower-window/color.webp')
@@ -174,10 +174,11 @@ const bushNormalTexture = textureLoader.load('./bushes/normal.webp')
 
 // Floor
 const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(20, 20, 20, 20),
+  new THREE.PlaneGeometry(20, 20, 50, 50),
   new THREE.MeshStandardMaterial({
     alphaMap: floorAlphaTexture,
     transparent: true,
+    // opacity: 0.5,
     map: floorColorTexture,
     aoMap: floorAOTexture,
     normalMap: floorNormalTexture,
@@ -232,6 +233,7 @@ house.add(rightBlock)
 const leftRoof = new THREE.Mesh(
   new THREE.CylinderGeometry(1, 1.5, 0.5, 4, 1),
   new THREE.MeshStandardMaterial({
+    color: '#86ae48',
     map: roofColorTexture,
     aoMap: roofAOTexture,
     roughnessMap: roofRoughnessTexture,
@@ -300,11 +302,11 @@ const rightDoor = new THREE.Mesh(
   new THREE.PlaneGeometry(1.2,1),
   new THREE.MeshStandardMaterial({
     color: 'red',
-    map: roofColorTexture,
-    aoMap: roofAOTexture,
-    // metalnessMap: roofMetalnessTexture,
-    normalMap: roofNormalTexture,
-    displacementMap: roofHeightTexture,
+    map: garageDoorColorTexture,
+    aoMap: garageDoorAOTexture,
+    // metalnessMap: garageDoorMetalnessTexture,
+    normalMap: garageDoorNormalTexture,
+    displacementMap: garageDoorHeightTexture,
     displacementScale: 0.0001
   })
 )
@@ -451,11 +453,11 @@ antialias: true
 renderer.setSize(sizes.width, sizes.height)
 
 // lights
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5)
 directionalLight.position.set(3, 2, -8)
 scene.add(directionalLight)
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 1)
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.12)
 scene.add(ambientLight)
 
 // light above the door
@@ -470,6 +472,13 @@ aboveGarageDoor.position.y += 0.9
 aboveGarageDoor.position.x += 2
 aboveGarageDoor.position.z += 1 + 0.001
 house.add(aboveGarageDoor)
+
+// gui for lights
+gui.add(directionalLight, 'intensity').min(0).max(3).step(0.01).name('dr light')
+gui.add(ambientLight, 'intensity').min(0).max(3).step(0.001).name('am light')
+gui.add(aboveDoor, 'intensity').min(0).max(5).step(0.01).name('door light')
+gui.add(aboveGarageDoor, 'intensity').min(0).max(5).step(0.01).name('garage light')
+
 // controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
@@ -499,7 +508,8 @@ document.exitFullscreen()
 })
 
 // fog
-scene.fog = new THREE.FogExp2('white', 0.05)
+scene.fog = new THREE.FogExp2('white', 0.09)
+gui.add(scene.fog, 'density').min(0).max(0.5).step(0.001)
 
 // Animate
 const timer = new Timer()
