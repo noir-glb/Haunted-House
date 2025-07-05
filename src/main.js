@@ -269,6 +269,7 @@ house.add(leftBlock)
 const rightRoof = new THREE.Mesh(
   new THREE.CylinderGeometry(1, 1.5, 0.5, 4, 1),
   new THREE.MeshStandardMaterial({
+    color: '#86ae48',
     map: roofColorTexture,
     aoMap: roofAOTexture,
     roughnessMap: roofRoughnessTexture,
@@ -286,6 +287,7 @@ house.add(rightRoof)
 const roof = new THREE.Mesh(
   new THREE.ConeGeometry(2, 1, 4),
   new THREE.MeshStandardMaterial({
+    color: '#86ae48',
     map: roofColorTexture,
     aoMap: roofAOTexture,
     roughnessMap: roofRoughnessTexture,
@@ -440,7 +442,7 @@ height: window.innerHeight
 
 const camera = new THREE.PerspectiveCamera(50, sizes.width / sizes.height, 0.1, 100)
 camera.position.z = 8
-camera.position.y = 2
+camera.position.y = 1
 camera.position.x = 4
 scene.add(camera)
 
@@ -460,23 +462,23 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.12)
 scene.add(ambientLight)
 
 // light above the door
-const aboveDoor = new THREE.PointLight('white', 3)
+const aboveDoor = new THREE.PointLight('#eabf20', 3)
 aboveDoor.position.y += 0.9
 aboveDoor.position.x -= 2
-aboveDoor.position.z += 1 + 0.001
+aboveDoor.position.z += 1 + 0.003
 house.add(aboveDoor)
 
-const aboveGarageDoor = new THREE.PointLight('white', 3)
+const aboveGarageDoor = new THREE.PointLight('#eabf20', 3)
 aboveGarageDoor.position.y += 0.9
 aboveGarageDoor.position.x += 2
-aboveGarageDoor.position.z += 1 + 0.001
+aboveGarageDoor.position.z += 1 + 0.003
 house.add(aboveGarageDoor)
 
 // gui for lights
-gui.add(directionalLight, 'intensity').min(0).max(3).step(0.01).name('dr light')
-gui.add(ambientLight, 'intensity').min(0).max(3).step(0.001).name('am light')
-gui.add(aboveDoor, 'intensity').min(0).max(5).step(0.01).name('door light')
-gui.add(aboveGarageDoor, 'intensity').min(0).max(5).step(0.01).name('garage light')
+// gui.add(directionalLight, 'intensity').min(0).max(3).step(0.01).name('dr light')
+// gui.add(ambientLight, 'intensity').min(0).max(3).step(0.001).name('am light')
+// gui.add(aboveDoor, 'intensity').min(0).max(5).step(0.01).name('door light')
+// gui.add(aboveGarageDoor, 'intensity').min(0).max(5).step(0.01).name('garage light')
 
 // ghost lights
 const ghost1 = new THREE.PointLight('#8800ff', 1)
@@ -564,6 +566,10 @@ ghost3.shadow.camera.far = 10
 // controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
+controls.minPolarAngle = Math.PI / 4; 
+controls.maxPolarAngle = Math.PI / 2.1; 
+controls.minDistance = 4
+controls.maxDistance = 10
 
 // screenSize
 window.addEventListener('resize', ()=>{
@@ -602,8 +608,8 @@ sky.material.uniforms['sunPosition'].value.set(0.3, -0.038,-0.95)
 
 
 // fog
-scene.fog = new THREE.FogExp2('#14333e', 0.15)
-gui.add(scene.fog, 'density').min(0).max(0.5).step(0.001)
+scene.fog = new THREE.FogExp2('#14333e', 0.11)
+// gui.add(scene.fog, 'density').min(0).max(0.5).step(0.001)
 
 // Animate
 const timer = new Timer()
