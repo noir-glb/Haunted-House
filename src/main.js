@@ -569,7 +569,7 @@ controls.enableDamping = true
 controls.minPolarAngle = Math.PI / 4; 
 controls.maxPolarAngle = Math.PI / 2.1; 
 controls.minDistance = 4
-controls.maxDistance = 10
+controls.maxDistance = 12
 
 // screenSize
 window.addEventListener('resize', ()=>{
