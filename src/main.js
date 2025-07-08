@@ -4,6 +4,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import Stats from 'stats.js'
 import {Sky} from 'three/addons/objects/Sky.js'
+import { flattenJSON } from 'three/src/animation/AnimationUtils.js'
 
 // canvas
 const canvas = document.querySelector('.webgl')
@@ -570,6 +571,7 @@ controls.minPolarAngle = Math.PI / 4;
 controls.maxPolarAngle = Math.PI / 2.1; 
 controls.minDistance = 4
 controls.maxDistance = 12
+controls.enablePan = false
 
 // screenSize
 window.addEventListener('resize', ()=>{
